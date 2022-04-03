@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const session=require("express-session")
 const errorController = require('./controllers/error');
 const User = require('./models/user');
+var MongoDBStore = require('connect-mongodb-session')(session);
 
 const app = express();
 
@@ -26,6 +27,10 @@ app.use((req, res, next) => {
       next();
     })
     .catch(err => console.log(err));
+});
+var store = new MongoDBStore({
+  uri: 'mongodb+srv://mongoose:john123@cluster0.xcjno.mongodb.net/myMongooseDatabase?retryWrites=true&w=majority',
+  collection: 'mySessions'
 });
 
 app.use('/admin', adminRoutes);
