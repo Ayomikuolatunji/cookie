@@ -6,9 +6,14 @@ const mongoose = require('mongoose');
 const session=require("express-session")
 const errorController = require('./controllers/error');
 const User = require('./models/user');
-var MongoDBStore = require('connect-mongodb-session')(session);
-
+const MongoDBStore = require('connect-mongodb-session')(session);
 const app = express();
+
+
+const store = new MongoDBStore({
+  uri: 'mongodb+srv://mongoose:john123@cluster0.xcjno.mongodb.net/myMongooseDatabase',
+  collection: 'sessions',
+});
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -16,7 +21,6 @@ app.set('views', 'views');
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth');
-
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(session({secret:"my secret", resave:false,saveUninitialized:false}))
@@ -27,10 +31,6 @@ app.use((req, res, next) => {
       next();
     })
     .catch(err => console.log(err));
-});
-var store = new MongoDBStore({
-  uri: 'mongodb+srv://mongoose:john123@cluster0.xcjno.mongodb.net/myMongooseDatabase?retryWrites=true&w=majority',
-  collection: 'mySessions'
 });
 
 app.use('/admin', adminRoutes);
